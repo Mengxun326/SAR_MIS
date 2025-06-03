@@ -3,11 +3,10 @@ import type { RequestOptions } from '@@/plugin-request/request';
 import type { RequestConfig } from '@umijs/max';
 
 // 与后端约定的响应数据格式
-interface ResponseStructure {
-  success: boolean;
-  data: any;
-  errorCode?: number;
-  errorMessage?: string;
+interface BackendResponse<T = any> {
+  code: number;
+  data: T;
+  message: string;
 }
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -35,14 +34,14 @@ export const requestConfig: RequestConfig = {
       // 请求地址
       const requestPath: string = response.config.url ?? '';
 
-      // 响应
-      const { data } = response as unknown as ResponseStructure;
-      if (!data) {
+      // 响应数据 - 这里response.data才是后端返回的实际数据
+      const responseData = response.data as BackendResponse;
+      if (!responseData) {
         throw new Error('服务异常');
       }
 
-      // 错误码处理
-      const code: number = data.code;
+      // 错误码处理 - 从responseData中获取code
+      const code: number = responseData.code;
       // 未登录，且不为获取用户登录信息接口
       if (
         code === 40100 &&
@@ -55,7 +54,7 @@ export const requestConfig: RequestConfig = {
       }
 
       if (code !== 0) {
-        throw new Error(data.message ?? '服务器错误');
+        throw new Error(responseData.message ?? '服务器错误');
       }
       return response;
     },

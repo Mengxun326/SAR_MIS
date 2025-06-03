@@ -167,7 +167,7 @@
 
 ## 贡献者
 
-- **项目负责人**: [@Mengxun326](https://github.com/Mengxun326)
+- **项目负责人**: [@xingchen](https://github.com/xingchen)
 - **开发团队**: SAR_MIS开发组
 
 ## 反馈与支持
@@ -176,10 +176,4 @@
 
 - 📧 邮箱：xingchen@qq.com
 - 🐛 问题反馈：[GitHub Issues](https://github.com/Mengxun326/SAR_MIS/issues)
-- 💬 技术交流群：123456789
-
-## 相关链接
-
-- 📂 [项目仓库](https://github.com/Mengxun326/SAR_MIS)
-- 📋 [项目文档](https://github.com/Mengxun326/SAR_MIS/blob/main/README.md)
-- 🚀 [部署说明](https://github.com/Mengxun326/SAR_MIS/blob/main/部署说明.md) 
+- 💬 技术交流群：123456789 

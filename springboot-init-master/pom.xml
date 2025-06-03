@@ -15,22 +15,8 @@
     <artifactId>springboot-init</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>springboot-init</name>
-    <description>学生学籍管理信息系统后端</description>
-    <url>https://github.com/Mengxun326/SAR_MIS</url>
-    
-    <scm>
-        <connection>scm:git:https://github.com/Mengxun326/SAR_MIS.git</connection>
-        <developerConnection>scm:git:https://github.com/Mengxun326/SAR_MIS.git</developerConnection>
-        <url>https://github.com/Mengxun326/SAR_MIS</url>
-    </scm>
-    
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/Mengxun326/SAR_MIS/issues</url>
-    </issueManagement>
-    
     <properties>
-        <java.version>17</java.version>
+        <java.version>8</java.version>
         <lombok.version>1.18.30</lombok.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
