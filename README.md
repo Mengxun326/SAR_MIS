@@ -171,7 +171,7 @@ SAR_MIS/
 
 ### 1. 克隆项目
 ```bash
-git clone https://github.com/your-repo/SAR_MIS.git
+git clone https://github.com/Mengxun326/SAR_MIS.git
 cd SAR_MIS
 ```
 

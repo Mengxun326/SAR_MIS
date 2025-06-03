@@ -3,6 +3,14 @@
   "version": "6.0.0",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mengxun326/SAR_MIS.git"
+  },
+  "homepage": "https://github.com/Mengxun326/SAR_MIS",
+  "bugs": {
+    "url": "https://github.com/Mengxun326/SAR_MIS/issues"
+  },
   "scripts": {
     "analyze": "cross-env ANALYZE=1 max build",
     "build": "max build",

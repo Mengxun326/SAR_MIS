@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
               <GithubOutlined /> 系统源码
             </>
           ),
-          href: 'https://github.com',
+          href: 'https://github.com/Mengxun326/SAR_MIS',
           blankTarget: true,
         },
       ]}

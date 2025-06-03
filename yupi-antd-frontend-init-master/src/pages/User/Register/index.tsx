@@ -1,7 +1,7 @@
 import Footer from '@/components/Footer';
 import { userRegisterUsingPost } from '@/services/backend/userController';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormText, ProFormSelect } from '@ant-design/pro-components';
+import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { Helmet, history } from '@umijs/max';
 import { message, Tabs } from 'antd';
@@ -126,43 +126,6 @@ const UserRegisterPage: React.FC = () => {
                   {
                     pattern: /^[a-zA-Z0-9_]+$/,
                     message: '账号只能包含字母、数字、下划线！',
-                  },
-                ]}
-              />
-              <ProFormText
-                name="userName"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <UserOutlined />,
-                }}
-                placeholder={'请输入用户名'}
-                rules={[
-                  {
-                    required: true,
-                    message: '用户名是必填项！',
-                  },
-                  {
-                    min: 2,
-                    max: 20,
-                    message: '用户名长度在2-20位之间！',
-                  },
-                ]}
-              />
-              <ProFormSelect
-                name="userRole"
-                fieldProps={{
-                  size: 'large',
-                }}
-                placeholder={'请选择用户角色'}
-                options={[
-                  { label: '学生', value: 'user' },
-                  { label: '教师', value: 'teacher' },
-                  { label: '管理员', value: 'admin' },
-                ]}
-                rules={[
-                  {
-                    required: true,
-                    message: '用户角色是必填项！',
                   },
                 ]}
               />
