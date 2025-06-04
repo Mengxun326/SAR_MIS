@@ -4,7 +4,7 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.0-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/React-18.0-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-4.7-blue.svg)](https://www.typescriptlang.org/)
-[![Ant Design](https://img.shields.io/badge/Ant%20Design-5.0-blue.svg)](https://ant.design/)[![GitHub stars](https://img.shields.io/github/stars/Mengxun326/SAR_MIS?style=social)]([Mengxun326/SAR_MIS](https://github.com/Mengxun326/SAR_MIS))[![GitHub forks](https://img.shields.io/github/forks/Mengxun326/SAR_MIS?style=social)]([Mengxun326/SAR_MIS](https://github.com/Mengxun326/SAR_MIS))
+[![Ant Design](https://img.shields.io/badge/Ant%20Design-5.0-blue.svg)](https://ant.design/) [![GitHub stars](https://img.shields.io/github/stars/Mengxun326/SAR_MIS?style=social)]([Mengxun326/SAR_MIS](https://github.com/Mengxun326/SAR_MIS)) [![GitHub forks](https://img.shields.io/github/forks/Mengxun326/SAR_MIS?style=social)]([Mengxun326/SAR_MIS](https://github.com/Mengxun326/SAR_MIS))
 
 > 🚀 智能化、现代化的学生学籍管理解决方案
 
