@@ -3,7 +3,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, PageContainer } from '@ant-design/pro-components';
 import { Button, message, Popconfirm, Space, Tag, Typography, Progress, Badge } from 'antd';
 import React, { useRef, useState } from 'react';
-import { history } from '@umijs/max';
+import { history, useModel } from '@umijs/max';
 import {
   listStudentScoreByPageUsingPOST,
   deleteStudentScoreUsingPOST,
@@ -17,6 +17,8 @@ const { Text } = Typography;
 const ScoreList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const actionRef = useRef<ActionType>();
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState || {};
 
   /**
    * 删除成绩
@@ -259,43 +261,47 @@ const ScoreList: React.FC = () => {
           >
             查看
           </Button>
-          <Button
-            type="default"
-            size="small"
-            icon={<EditOutlined />}
-            style={{
-              background: 'linear-gradient(90deg, #52c41a, #73d13d)',
-              border: 'none',
-              borderRadius: '6px',
-              color: 'white',
-              fontWeight: 'bold'
-            }}
-            onClick={() => {
-              if (record.id) {
-                history.push(`/score/edit/${record.id}`);
-              }
-            }}
-          >
-            编辑
-          </Button>
-          <Popconfirm
-            title="确定删除该成绩记录吗？"
-            description="删除后将无法恢复，请谨慎操作。"
-            onConfirm={() => handleDelete(record)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button
-              type="primary"
-              size="small"
-              icon={<DeleteOutlined />}
-              danger
-              loading={loading}
-              style={{ borderRadius: '6px' }}
-            >
-              删除
-            </Button>
-          </Popconfirm>
+          {(currentUser?.userRole === 'teacher' || currentUser?.userRole === 'admin') && (
+            <>
+              <Button
+                type="default"
+                size="small"
+                icon={<EditOutlined />}
+                style={{
+                  background: 'linear-gradient(90deg, #52c41a, #73d13d)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: 'white',
+                  fontWeight: 'bold'
+                }}
+                onClick={() => {
+                  if (record.id) {
+                    history.push(`/score/edit/${record.id}`);
+                  }
+                }}
+              >
+                编辑
+              </Button>
+              <Popconfirm
+                title="确定删除该成绩记录吗？"
+                description="删除后将无法恢复，请谨慎操作。"
+                onConfirm={() => handleDelete(record)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<DeleteOutlined />}
+                  danger
+                  loading={loading}
+                  style={{ borderRadius: '6px' }}
+                >
+                  删除
+                </Button>
+              </Popconfirm>
+            </>
+          )}
         </Space>
       ),
     },
@@ -333,22 +339,24 @@ const ScoreList: React.FC = () => {
           }
         }}
         toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            icon={<PlusOutlined />}
-            style={{
-              background: 'linear-gradient(90deg, #1890ff, #722ed1)',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: 'bold'
-            }}
-            onClick={() => {
-              history.push('/score/add');
-            }}
-          >
-            录入成绩
-          </Button>,
+          ...(currentUser?.userRole === 'teacher' || currentUser?.userRole === 'admin' ? [
+            <Button
+              type="primary"
+              key="primary"
+              icon={<PlusOutlined />}
+              style={{
+                background: 'linear-gradient(90deg, #1890ff, #722ed1)',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 'bold'
+              }}
+              onClick={() => {
+                history.push('/score/add');
+              }}
+            >
+              录入成绩
+            </Button>
+          ] : []),
         ]}
         request={async (params, sort, filter) => {
           try {

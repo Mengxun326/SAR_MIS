@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
-import { Card, theme, Row, Col, Statistic, Typography, Space, Badge, Timeline, Avatar, Progress, message } from 'antd';
+import { useModel, history } from '@umijs/max';
+import { Card, theme, Row, Col, Statistic, Typography, Space, Badge, Timeline, Avatar, Progress, message, Button } from 'antd';
 import { UserOutlined, BookOutlined, TrophyOutlined, TeamOutlined, RocketOutlined, StarOutlined, SafetyCertificateOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import useDocumentTitle from '@/hooks/useDocumentTitle';
@@ -30,6 +30,11 @@ const FeatureCard: React.FC<{
   const { useToken } = theme;
   const { token } = useToken();
 
+  const handleClick = () => {
+    // 使用前端路由跳转，而不是页面刷新
+    history.push(href);
+  };
+
   return (
     <div
       style={{
@@ -48,7 +53,7 @@ const FeatureCard: React.FC<{
         position: 'relative',
         overflow: 'hidden',
       }}
-      onClick={() => window.location.href = href}
+      onClick={handleClick}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
         e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)';
@@ -232,13 +237,20 @@ const Welcome: React.FC = () => {
   // 设置页面标题
   useDocumentTitle(PAGE_TITLES.WELCOME);
 
+  // 获取当前用户权限
+  const currentUser = initialState?.currentUser;
+  const isAdmin = currentUser?.userRole === 'admin';
+  const isTeacher = currentUser?.userRole === 'teacher' || isAdmin;
+  const isUser = !!currentUser;
+
   // 调试用户数据
   useEffect(() => {
     console.log('🔍 当前用户数据:', initialState?.currentUser);
     console.log('🖼️ 用户头像URL:', initialState?.currentUser?.userAvatar);
     console.log('👤 用户姓名:', initialState?.currentUser?.userName);
     console.log('🎭 用户角色:', initialState?.currentUser?.userRole);
-  }, [initialState]);
+    console.log('🔑 权限状态:', { isAdmin, isTeacher, isUser });
+  }, [initialState, isAdmin, isTeacher, isUser]);
 
   // 获取统计数据
   useEffect(() => {
@@ -266,6 +278,110 @@ const Welcome: React.FC = () => {
 
     fetchStatistics();
   }, []);
+
+  // 根据权限生成功能卡片
+  const getFeatureCards = () => {
+    const cards = [];
+
+    // 所有已登录用户可访问的功能
+    if (isUser) {
+      cards.push(
+        <FeatureCard
+          key="status-change"
+          icon={<TeamOutlined />}
+          title="学籍异动"
+          href="/status-change/list"
+          color="#722ed1"
+          desc="查看学籍异动记录，学生可以申请各类学籍变更，教师可以审批异动申请。"
+        />
+      );
+
+      cards.push(
+        <FeatureCard
+          key="course-selection"
+          icon={<BookOutlined />}
+          title="选课管理"
+          href="/course-selection/my"
+          color="#52c41a"
+          desc="管理个人选课信息，查看已选课程，进行选课操作。"
+        />
+      );
+
+      cards.push(
+        <FeatureCard
+          key="extended-info"
+          icon={<UserOutlined />}
+          title="扩展信息"
+          href="/extended-info/family"
+          color="#1890ff"
+          desc="管理个人扩展信息，包括家庭信息、健康档案等详细资料。"
+        />
+      );
+    }
+
+    // 教师和管理员可访问的功能
+    if (isTeacher) {
+      cards.push(
+        <FeatureCard
+          key="student"
+          icon={<UserOutlined />}
+          title="学生管理"
+          href="/student/list"
+          color="#1890ff"
+          desc="管理学生基本信息，包括个人资料、联系方式、学籍状态等，支持批量导入导出功能。"
+        />
+      );
+
+      cards.push(
+        <FeatureCard
+          key="course"
+          icon={<BookOutlined />}
+          title="课程管理"
+          href="/course/list"
+          color="#52c41a"
+          desc="管理课程信息和选课系统，包括课程设置、选课管理、课程安排等功能。"
+        />
+      );
+
+      cards.push(
+        <FeatureCard
+          key="score"
+          icon={<TrophyOutlined />}
+          title="成绩管理"
+          href="/score/list"
+          color="#faad14"
+          desc="录入和管理学生成绩，提供成绩统计分析、GPA计算、成绩排名等功能。"
+        />
+      );
+
+      cards.push(
+        <FeatureCard
+          key="award-punishment"
+          icon={<StarOutlined />}
+          title="奖惩管理"
+          href="/award-punishment/award"
+          color="#f5222d"
+          desc="管理学生奖励和处分记录，包括奖学金、荣誉称号、违纪处分等。"
+        />
+      );
+    }
+
+    // 仅管理员可访问的功能
+    if (isAdmin) {
+      cards.push(
+        <FeatureCard
+          key="admin"
+          icon={<SafetyCertificateOutlined />}
+          title="系统管理"
+          href="/admin/user"
+          color="#722ed1"
+          desc="系统用户管理，包括用户注册、权限分配、系统配置等管理功能。"
+        />
+      );
+    }
+
+    return cards;
+  };
   
   return (
     <PageContainer
@@ -307,6 +423,11 @@ const Welcome: React.FC = () => {
               </Badge>
               <Text style={{ color: 'white' }}>🔒 数据安全保障</Text>
               <Text style={{ color: 'white' }}>📊 可视化分析</Text>
+              {isUser && (
+                <Text style={{ color: 'white' }}>
+                  👋 欢迎，{currentUser?.userRole === 'admin' ? '管理员' : currentUser?.userRole === 'teacher' ? '教师' : '同学'}
+                </Text>
+              )}
             </Space>
           </Col>
           <Col span={8} style={{ textAlign: 'center' }}>
@@ -415,7 +536,9 @@ const Welcome: React.FC = () => {
             title={
               <Space>
                 <ThunderboltOutlined style={{ color: 'white' }} />
-                <span style={{ fontWeight: 'bold', color: 'white' }}>主要功能模块</span>
+                <span style={{ fontWeight: 'bold', color: 'white' }}>
+                  {isTeacher ? '管理功能模块' : '可用功能模块'}
+                </span>
               </Space>
             }
             style={{ borderRadius: 16, marginBottom: 24 }}
@@ -432,34 +555,27 @@ const Welcome: React.FC = () => {
                 gap: 24,
               }}
             >
-              <FeatureCard
-                icon={<UserOutlined />}
-                title="学生管理"
-                href="/student/list"
-                color="#1890ff"
-                desc="管理学生基本信息，包括个人资料、联系方式、学籍状态等，支持批量导入导出功能。"
-              />
-              <FeatureCard
-                icon={<BookOutlined />}
-                title="课程管理"
-                href="/course/list"
-                color="#52c41a"
-                desc="管理课程信息和选课系统，包括课程设置、选课管理、课程安排等功能。"
-              />
-              <FeatureCard
-                icon={<TrophyOutlined />}
-                title="成绩管理"
-                href="/score/list"
-                color="#faad14"
-                desc="录入和管理学生成绩，提供成绩统计分析、GPA计算、成绩排名等功能。"
-              />
-              <FeatureCard
-                icon={<TeamOutlined />}
-                title="学籍异动"
-                href="/status-change/list"
-                color="#722ed1"
-                desc="处理学生学籍变更申请，包括休学、复学、转专业、退学等各类学籍异动。"
-              />
+              {getFeatureCards()}
+              {!isUser && (
+                <div style={{
+                  padding: '32px 24px',
+                  textAlign: 'center',
+                  color: '#999',
+                  border: '2px dashed #d9d9d9',
+                  borderRadius: '16px',
+                  width: '100%'
+                }}>
+                  <UserOutlined style={{ fontSize: '32px', marginBottom: '16px' }} />
+                  <div>请先登录以查看可用功能</div>
+                  <Button 
+                    type="primary" 
+                    style={{ marginTop: '12px' }}
+                    onClick={() => history.push('/user/login')}
+                  >
+                    立即登录
+                  </Button>
+                </div>
+              )}
             </div>
           </Card>
         </Col>

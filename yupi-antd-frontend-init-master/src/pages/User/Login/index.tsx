@@ -69,7 +69,7 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" style={{ height: '44px' }} src="/logo.svg" />}
+          logo={<img alt="logo" style={{ height: '44px' }} src="https://meng-xun-image-host.oss-cn-shanghai.aliyuncs.com/img/favicon%20(2).ico" />}
           title="学生学籍管理信息系统"
           subTitle={'统一身份认证平台'}
           initialValues={{

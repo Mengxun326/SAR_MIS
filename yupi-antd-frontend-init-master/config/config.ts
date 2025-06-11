@@ -7,11 +7,13 @@ import routes from './routes';
 const { REACT_APP_ENV = 'dev' } = process.env;
 export default defineConfig({
   /**
-   * @name 开启 hash 模式
-   * @description 让 build 之后的产物包含 hash 后缀。通常用于增量发布和避免浏览器加载缓存。
-   * @doc https://umijs.org/docs/api/config#hash
+   * @name 路由模式配置
+   * @description 使用 hash 模式避免刷新页面404问题，URL会带#号但更稳定
+   * @doc https://umijs.org/docs/api/config#history
    */
-  hash: true,
+  history: {
+    type: 'hash'
+  },
   /**
    * @name 兼容性设置
    * @description 设置 ie11 不一定完美兼容，需要检查自己使用的所有依赖
@@ -74,6 +76,7 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/layout-menu
    */
   title: '学生学籍管理信息系统',
+  favicons: ['https://meng-xun-image-host.oss-cn-shanghai.aliyuncs.com/img/favicon%20(2).ico'],
   layout: {
     locale: true,
     ...defaultSettings,

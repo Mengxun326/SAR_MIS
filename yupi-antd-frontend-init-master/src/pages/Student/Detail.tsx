@@ -2,7 +2,7 @@ import { PageContainer, ProDescriptions } from '@ant-design/pro-components';
 import { Card, message, Spin, Button, Tag } from 'antd';
 import { EditOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { history, useParams } from '@umijs/max';
+import { history, useParams, useModel } from '@umijs/max';
 import { getStudentByIdUsingGet, listStudentByPageUsingPost } from '@/services/backend/studentController';
 
 /**
@@ -12,6 +12,8 @@ const StudentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
   const [student, setStudent] = useState<API.Student>();
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState || {};
 
   /**
    * 获取学生信息
@@ -97,14 +99,16 @@ const StudentDetail: React.FC = () => {
           >
             返回列表
           </Button>,
-          <Button
-            key="edit"
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => history.push(`/student/edit/${id}`)}
-          >
-            编辑
-          </Button>,
+          ...(currentUser?.userRole === 'teacher' || currentUser?.userRole === 'admin' ? [
+            <Button
+              key="edit"
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={() => history.push(`/student/edit/${id}`)}
+            >
+              编辑
+            </Button>
+          ] : []),
         ],
       }}
     >

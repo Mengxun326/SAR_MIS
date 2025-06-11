@@ -1,9 +1,9 @@
 import { PlusOutlined, DeleteOutlined, EditOutlined, EyeOutlined, UserOutlined, TeamOutlined, BookOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, PageContainer } from '@ant-design/pro-components';
-import { Button, message, Popconfirm, Space, Tag, Avatar, Typography } from 'antd';
+import { Button, message, Popconfirm, Space, Tag, Avatar, Typography, Card, Statistic, Row, Col, Progress } from 'antd';
 import React, { useRef, useState } from 'react';
-import { history } from '@umijs/max';
+import { history, useModel } from '@umijs/max';
 import {
   listStudentByPageUsingPost,
   deleteStudentUsingPost,
@@ -19,6 +19,8 @@ const { Text } = Typography;
 const StudentList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const actionRef = useRef<ActionType>();
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState || {};
 
   // 设置页面标题
   useDocumentTitle(PAGE_TITLES.STUDENT_LIST);
@@ -231,47 +233,51 @@ const StudentList: React.FC = () => {
           >
             查看
           </Button>
-          <Button
-            type="default"
-            size="small"
-            icon={<EditOutlined />}
-            style={{
-              background: 'linear-gradient(90deg, #52c41a, #73d13d)',
-              border: 'none',
-              borderRadius: '6px',
-              color: 'white',
-              fontWeight: 'bold'
-            }}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (record.studentId) {
-                history.push(`/student/edit/${record.studentId}`);
-              } else {
-                message.error('学生学号不存在，无法编辑');
-              }
-            }}
-          >
-            编辑
-          </Button>
-          <Popconfirm
-            title="确定删除该学生信息吗？"
-            description="删除后将无法恢复，请谨慎操作。"
-            onConfirm={() => handleDelete(record)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button
-              type="primary"
-              size="small"
-              icon={<DeleteOutlined />}
-              danger
-              loading={loading}
-              style={{ borderRadius: '6px' }}
-            >
-              删除
-            </Button>
-          </Popconfirm>
+          {(currentUser?.userRole === 'teacher' || currentUser?.userRole === 'admin') && (
+            <>
+              <Button
+                type="default"
+                size="small"
+                icon={<EditOutlined />}
+                style={{
+                  background: 'linear-gradient(90deg, #52c41a, #73d13d)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: 'white',
+                  fontWeight: 'bold'
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (record.studentId) {
+                    history.push(`/student/edit/${record.studentId}`);
+                  } else {
+                    message.error('学生学号不存在，无法编辑');
+                  }
+                }}
+              >
+                编辑
+              </Button>
+              <Popconfirm
+                title="确定删除该学生信息吗？"
+                description="删除后将无法恢复，请谨慎操作。"
+                onConfirm={() => handleDelete(record)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<DeleteOutlined />}
+                  danger
+                  loading={loading}
+                  style={{ borderRadius: '6px' }}
+                >
+                  删除
+                </Button>
+              </Popconfirm>
+            </>
+          )}
         </Space>
       ),
     },
@@ -309,22 +315,24 @@ const StudentList: React.FC = () => {
           }
         }}
         toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            icon={<PlusOutlined />}
-            style={{
-              background: 'linear-gradient(90deg, #1890ff, #722ed1)',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: 'bold'
-            }}
-            onClick={() => {
-              history.push('/student/add');
-            }}
-          >
-            新增学生
-          </Button>,
+          ...(currentUser?.userRole === 'teacher' || currentUser?.userRole === 'admin' ? [
+            <Button
+              type="primary"
+              key="primary"
+              icon={<PlusOutlined />}
+              style={{
+                background: 'linear-gradient(90deg, #1890ff, #722ed1)',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 'bold'
+              }}
+              onClick={() => {
+                history.push('/student/add');
+              }}
+            >
+              新增学生
+            </Button>
+          ] : []),
         ]}
         request={async (params, sort, filter) => {
           console.log('Table request params:', params, sort, filter);

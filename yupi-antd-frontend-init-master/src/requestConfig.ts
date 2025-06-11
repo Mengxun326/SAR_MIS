@@ -1,6 +1,7 @@
 ﻿import { BACKEND_HOST_LOCAL, BACKEND_HOST_PROD } from '@/constants';
 import type { RequestOptions } from '@@/plugin-request/request';
 import type { RequestConfig } from '@umijs/max';
+import { message } from 'antd';
 
 // 与后端约定的响应数据格式
 interface BackendResponse<T = any> {
@@ -42,20 +43,43 @@ export const requestConfig: RequestConfig = {
 
       // 错误码处理 - 从responseData中获取code
       const code: number = responseData.code;
+      
       // 未登录，且不为获取用户登录信息接口
       if (
         code === 40100 &&
         !requestPath.includes('user/get/login') &&
         !location.pathname.includes('/user/login')
       ) {
-        // 跳转至登录页
-        window.location.href = `/user/login?redirect=${window.location.href}`;
+        // 避免重复重定向到登录页
+        if (!location.pathname.includes('/user/login')) {
+          const currentPath = location.pathname + location.search;
+          // 只保留路径部分，避免URL过长
+          const redirectPath = encodeURIComponent(currentPath);
+          
+          // 显示提示信息
+          message.warning('登录已过期，请重新登录');
+          
+          // 延迟跳转，避免与其他操作冲突
+          setTimeout(() => {
+            window.location.href = `/user/login?redirect=${redirectPath}`;
+          }, 500);
+        }
         throw new Error('请先登录');
       }
 
-      if (code !== 0) {
-        throw new Error(responseData.message ?? '服务器错误');
+      // 权限不足
+      if (code === 40101) {
+        message.error('权限不足，无法访问该资源');
+        throw new Error('权限不足');
       }
+
+      // 其他错误
+      if (code !== 0) {
+        const errorMessage = responseData.message ?? '服务器错误';
+        message.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+      
       return response;
     },
   ],

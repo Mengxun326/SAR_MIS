@@ -53,8 +53,6 @@ public class StudentPunishmentController {
         }
         StudentPunishment studentPunishment = new StudentPunishment();
         BeanUtils.copyProperties(studentPunishmentAddRequest, studentPunishment);
-        User loginUser = userService.getLoginUser(request);
-        studentPunishment.setHandler(loginUser.getUserName());
         boolean result = studentPunishmentService.addStudentPunishment(studentPunishment);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
@@ -110,8 +108,6 @@ public class StudentPunishmentController {
         }
         StudentPunishment studentPunishment = new StudentPunishment();
         BeanUtils.copyProperties(studentPunishmentUpdateRequest, studentPunishment);
-        User loginUser = userService.getLoginUser(request);
-        studentPunishment.setHandler(loginUser.getUserName());
         boolean result = studentPunishmentService.updateStudentPunishment(studentPunishment);
         return ResultUtils.success(result);
     }
@@ -162,8 +158,7 @@ public class StudentPunishmentController {
         if (id == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User loginUser = userService.getLoginUser(request);
-        boolean result = studentPunishmentService.revokeStudentPunishment(id, loginUser.getUserName());
+        boolean result = studentPunishmentService.revokeStudentPunishment(id);
         return ResultUtils.success(result);
     }
 } 

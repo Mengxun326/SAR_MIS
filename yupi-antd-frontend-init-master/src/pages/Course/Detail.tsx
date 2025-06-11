@@ -1,5 +1,5 @@
 import { PageContainer, ProDescriptions } from '@ant-design/pro-components';
-import { history, useParams } from '@umijs/max';
+import { history, useParams, useModel } from '@umijs/max';
 import { Button, Card, message, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { getCourseByIdUsingGET } from '@/services/backend/courseController';
@@ -8,6 +8,8 @@ const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [courseData, setCourseData] = useState<API.Course>();
   const [loading, setLoading] = useState(true);
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState || {};
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -53,9 +55,11 @@ const CourseDetail: React.FC = () => {
       <Card
         title="课程详情"
         extra={[
-          <Button key="edit" type="primary" onClick={() => history.push(`/course/edit/${id}`)}>
-            编辑课程
-          </Button>,
+          ...(currentUser?.userRole === 'teacher' || currentUser?.userRole === 'admin' ? [
+            <Button key="edit" type="primary" onClick={() => history.push(`/course/edit/${id}`)}>
+              编辑课程
+            </Button>
+          ] : []),
           <Button key="back" onClick={() => history.push('/course/list')}>
             返回列表
           </Button>,

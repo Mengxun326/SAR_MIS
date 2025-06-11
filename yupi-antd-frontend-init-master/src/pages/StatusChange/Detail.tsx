@@ -1,5 +1,5 @@
 import { PageContainer, ProCard, ProDescriptions } from '@ant-design/pro-components';
-import { history, useParams } from '@umijs/max';
+import { history, useParams, useModel } from '@umijs/max';
 import { Button, message, Tag, Space, Timeline, Alert } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeftOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -12,6 +12,8 @@ const StatusChangeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [record, setRecord] = useState<API.StudentStatusChange>();
   const [loading, setLoading] = useState(true);
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState || {};
 
   useEffect(() => {
     if (id) {
@@ -95,7 +97,7 @@ const StatusChangeDetail: React.FC = () => {
           >
             返回列表
           </Button>,
-          record?.status === '待审批' && (
+          ...(record?.status === '待审批' && (currentUser?.userRole === 'admin') ? [
             <Button
               key="edit"
               type="primary"
@@ -104,7 +106,7 @@ const StatusChangeDetail: React.FC = () => {
             >
               审批
             </Button>
-          ),
+          ] : []),
           <Button
             key="delete"
             danger

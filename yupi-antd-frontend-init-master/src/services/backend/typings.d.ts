@@ -729,9 +729,8 @@ declare namespace API {
     punishmentType?: string;
     reason?: string;
     punishmentDate?: string;
-    duration?: number;
+    cancelDate?: string;
     description?: string;
-    isRevoked?: number;
     createTime?: string;
     updateTime?: string;
   };
@@ -754,7 +753,6 @@ declare namespace API {
     punishmentType?: string;
     reason?: string;
     punishmentDate?: string;
-    duration?: number;
     description?: string;
   };
 
@@ -764,7 +762,7 @@ declare namespace API {
     punishmentType?: string;
     reason?: string;
     punishmentDate?: string;
-    duration?: number;
+    cancelDate?: string;
     description?: string;
   };
 
@@ -773,7 +771,7 @@ declare namespace API {
     pageSize?: number;
     studentId?: string;
     punishmentType?: string;
-    isRevoked?: number;
+    isRevoked?: boolean;
     startDate?: string;
     endDate?: string;
     sortField?: string;

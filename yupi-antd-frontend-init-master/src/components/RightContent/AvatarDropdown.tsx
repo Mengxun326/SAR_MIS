@@ -1,7 +1,7 @@
 import { userLogoutUsingPost } from '@/services/backend/userController';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
-import { Avatar, Button, Space } from 'antd';
+import { Avatar, Button, Space, message } from 'antd';
 import { stringify } from 'querystring';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
@@ -18,11 +18,19 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
    * 退出登录，并且将当前的 url 保存
    */
   const loginOut = async () => {
-    await userLogoutUsingPost();
+    try {
+      await userLogoutUsingPost();
+      message.success('退出登录成功');
+    } catch (error) {
+      console.error('退出登录失败:', error);
+      message.error('退出登录失败');
+    }
+    
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     /** 此方法会跳转到 redirect 参数所在的位置 */
     const redirect = urlParams.get('redirect');
+    
     // Note: There may be security issues, please note
     if (window.location.pathname !== '/user/login' && !redirect) {
       history.replace({
@@ -46,6 +54,14 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         loginOut();
         return;
       }
+      
+      // 修复个人中心路由跳转
+      if (key === 'center' || key === 'settings') {
+        history.push(`/account/${key}`);
+        return;
+      }
+      
+      // 其他路由跳转
       history.push(`/account/${key}`);
     },
     [setInitialState],

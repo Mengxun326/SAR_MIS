@@ -25,9 +25,9 @@ public class StudentPunishmentQueryRequest extends PageRequest implements Serial
     private String punishmentType;
 
     /**
-     * 是否已解除（0-未解除，1-已解除）
+     * 是否已解除（根据cancelDate是否为null判断）
      */
-    private Integer isRevoked;
+    private Boolean isRevoked;
 
     /**
      * 处分开始日期

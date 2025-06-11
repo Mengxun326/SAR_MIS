@@ -1,5 +1,7 @@
 package com.yupi.project.model.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,11 +16,13 @@ public class CourseSelectionVO implements Serializable {
     /**
      * id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
      * 学生id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long studentId;
 
     /**
@@ -29,6 +33,7 @@ public class CourseSelectionVO implements Serializable {
     /**
      * 课程id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long courseId;
 
     /**

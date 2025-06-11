@@ -46,8 +46,7 @@ public interface StudentPunishmentService extends IService<StudentPunishment> {
      * 解除学生处分
      *
      * @param id
-     * @param handler
      * @return
      */
-    boolean revokeStudentPunishment(Long id, String handler);
+    boolean revokeStudentPunishment(Long id);
 } 

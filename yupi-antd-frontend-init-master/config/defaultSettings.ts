@@ -17,6 +17,7 @@ const Settings: ProLayoutProps & {
   colorWeak: false,
   title: '学生学籍管理信息系统',
   pwa: true,
+  logo: 'https://meng-xun-image-host.oss-cn-shanghai.aliyuncs.com/img/favicon%20(2).ico',
   iconfontUrl: '',
   token: {
     // 参见ts声明，demo 见文档，通过token 修改样式

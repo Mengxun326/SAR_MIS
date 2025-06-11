@@ -101,24 +101,26 @@ const PunishmentManagement: React.FC = () => {
       valueType: 'date',
     },
     {
-      title: '处分期限(月)',
-      dataIndex: 'duration',
-      key: 'duration',
+      title: '解除日期',
+      dataIndex: 'cancelDate',
+      key: 'cancelDate',
       width: 120,
+      valueType: 'date',
+      render: (text) => text || '未解除',
     },
     {
-      title: '是否撤销',
-      dataIndex: 'isRevoked',
-      key: 'isRevoked',
+      title: '状态',
+      dataIndex: 'cancelDate',
+      key: 'status',
       width: 100,
       render: (_, record) => {
-        return record.isRevoked === 1 ? 
+        return record.cancelDate ? 
           <Tag color="green">已撤销</Tag> : 
           <Tag color="red">未撤销</Tag>;
       },
       valueEnum: {
-        0: { text: '未撤销', status: 'Error' },
-        1: { text: '已撤销', status: 'Success' },
+        false: { text: '未撤销', status: 'Error' },
+        true: { text: '已撤销', status: 'Success' },
       },
     },
     {
@@ -154,7 +156,7 @@ const PunishmentManagement: React.FC = () => {
           >
             编辑
           </Button>
-          {record.isRevoked === 0 && (
+          {!record.cancelDate && (
             <Popconfirm
               title="确定要撤销这个处分吗？"
               onConfirm={() => handleRevoke(record.id!)}
@@ -256,12 +258,7 @@ const PunishmentManagement: React.FC = () => {
           label="处分日期"
           rules={[{ required: true, message: '请选择处分日期' }]}
         />
-        <ProFormDigit
-          name="duration"
-          label="处分期限(月)"
-          min={0}
-          placeholder="请输入处分期限"
-        />
+
         <ProFormTextArea
           name="description"
           label="描述"
@@ -307,11 +304,10 @@ const PunishmentManagement: React.FC = () => {
           label="处分日期"
           rules={[{ required: true, message: '请选择处分日期' }]}
         />
-        <ProFormDigit
-          name="duration"
-          label="处分期限(月)"
-          min={0}
-          placeholder="请输入处分期限"
+        <ProFormDatePicker
+          name="cancelDate"
+          label="解除日期"
+          placeholder="选择解除日期"
         />
         <ProFormTextArea
           name="description"

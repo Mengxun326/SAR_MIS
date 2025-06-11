@@ -40,16 +40,14 @@ public class StudentPunishmentServiceImpl extends ServiceImpl<StudentPunishmentM
         String punishmentType = studentPunishment.getPunishmentType();
         String reason = studentPunishment.getReason();
         Date punishmentDate = studentPunishment.getPunishmentDate();
-        Integer duration = studentPunishment.getDuration();
-        String handler = studentPunishment.getHandler();
 
         // 创建时，参数不能为空
         if (add) {
-            if (StringUtils.isAnyBlank(studentId, punishmentType, reason, handler)) {
+            if (StringUtils.isAnyBlank(studentId, punishmentType, reason)) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不能为空");
             }
-            if (punishmentDate == null || duration == null) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不能为空");
+            if (punishmentDate == null) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "处分日期不能为空");
             }
         }
 
@@ -57,18 +55,12 @@ public class StudentPunishmentServiceImpl extends ServiceImpl<StudentPunishmentM
         if (StringUtils.isNotBlank(punishmentType) && !VALID_PUNISHMENT_TYPES.contains(punishmentType)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "处分类型不合法");
         }
-        if (duration != null && duration <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "处分期限必须大于0");
-        }
     }
 
     @Override
     public boolean addStudentPunishment(StudentPunishment studentPunishment) {
         // 校验
         validStudentPunishment(studentPunishment, true);
-
-        // 初始化处分状态
-        studentPunishment.setIsRevoked(0);
 
         return this.save(studentPunishment);
     }
@@ -89,7 +81,7 @@ public class StudentPunishmentServiceImpl extends ServiceImpl<StudentPunishmentM
         }
 
         // 如果处分已解除，不允许修改
-        if (oldPunishment.getIsRevoked() == 1) {
+        if (oldPunishment.getCancelDate() != null) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "处分已解除，不能修改");
         }
 
@@ -102,20 +94,9 @@ public class StudentPunishmentServiceImpl extends ServiceImpl<StudentPunishmentM
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
-        StudentPunishment studentPunishmentQuery = new StudentPunishment();
         String studentId = studentPunishmentQueryRequest.getStudentId();
         String punishmentType = studentPunishmentQueryRequest.getPunishmentType();
-        Integer isRevoked = studentPunishmentQueryRequest.getIsRevoked();
-
-        if (StringUtils.isNotBlank(studentId)) {
-            studentPunishmentQuery.setStudentId(studentId);
-        }
-        if (StringUtils.isNotBlank(punishmentType)) {
-            studentPunishmentQuery.setPunishmentType(punishmentType);
-        }
-        if (isRevoked != null) {
-            studentPunishmentQuery.setIsRevoked(isRevoked);
-        }
+        Boolean isRevoked = studentPunishmentQueryRequest.getIsRevoked();
 
         long current = studentPunishmentQueryRequest.getCurrent();
         long size = studentPunishmentQueryRequest.getPageSize();
@@ -127,21 +108,47 @@ public class StudentPunishmentServiceImpl extends ServiceImpl<StudentPunishmentM
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
-        QueryWrapper<StudentPunishment> queryWrapper = new QueryWrapper<>(studentPunishmentQuery);
-        queryWrapper.ge(studentPunishmentQueryRequest.getStartDate() != null, "punishmentDate",
-                studentPunishmentQueryRequest.getStartDate());
-        queryWrapper.le(studentPunishmentQueryRequest.getEndDate() != null, "punishmentDate",
-                studentPunishmentQueryRequest.getEndDate());
-        queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
-                sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
-                sortField);
+        QueryWrapper<StudentPunishment> queryWrapper = new QueryWrapper<>();
+        
+        // 添加查询条件
+        if (StringUtils.isNotBlank(studentId)) {
+            queryWrapper.eq("studentId", studentId);
+        }
+        if (StringUtils.isNotBlank(punishmentType)) {
+            queryWrapper.eq("punishmentType", punishmentType);
+        }
+        if (isRevoked != null) {
+            if (isRevoked) {
+                queryWrapper.isNotNull("cancelDate");
+            } else {
+                queryWrapper.isNull("cancelDate");
+            }
+        }
+        
+        // 添加日期范围查询
+        if (studentPunishmentQueryRequest.getStartDate() != null) {
+            queryWrapper.ge("punishDate", studentPunishmentQueryRequest.getStartDate());
+        }
+        if (studentPunishmentQueryRequest.getEndDate() != null) {
+            queryWrapper.le("punishDate", studentPunishmentQueryRequest.getEndDate());
+        }
+        
+        // 排序
+        if (StringUtils.isNotBlank(sortField)) {
+            queryWrapper.orderBy(true,
+                    CommonConstant.SORT_ORDER_ASC.equals(sortOrder),
+                    sortField);
+        } else {
+            // 默认按处分日期倒序
+            queryWrapper.orderByDesc("punishDate");
+        }
 
         return this.page(new Page<>(current, size), queryWrapper);
     }
 
     @Override
-    public boolean revokeStudentPunishment(Long id, String handler) {
-        if (id == null || StringUtils.isBlank(handler)) {
+    public boolean revokeStudentPunishment(Long id) {
+        if (id == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
@@ -152,14 +159,12 @@ public class StudentPunishmentServiceImpl extends ServiceImpl<StudentPunishmentM
         }
 
         // 判断是否已解除
-        if (studentPunishment.getIsRevoked() == 1) {
+        if (studentPunishment.getCancelDate() != null) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "处分已解除");
         }
 
-        // 更新处分状态
-        studentPunishment.setIsRevoked(1);
-        studentPunishment.setRevokeDate(new Date());
-        studentPunishment.setHandler(handler);
+        // 更新处分状态 - 设置解除日期
+        studentPunishment.setCancelDate(new Date());
 
         return this.updateById(studentPunishment);
     }

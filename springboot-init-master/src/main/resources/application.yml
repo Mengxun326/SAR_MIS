@@ -17,7 +17,7 @@ spring:
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/student_management
+    url: jdbc:mysql://localhost://47.121.180.250:3306/student_management
     username: student_management
     password: ATMWWra7MeZrf3RP
   # Redis 配置

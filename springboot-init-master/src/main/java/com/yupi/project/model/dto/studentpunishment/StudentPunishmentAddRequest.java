@@ -32,19 +32,9 @@ public class StudentPunishmentAddRequest implements Serializable {
     private Date punishmentDate;
 
     /**
-     * 处分期限（月）
-     */
-    private Integer duration;
-
-    /**
-     * 处理人
-     */
-    private String handler;
-
-    /**
      * 备注
      */
-    private String remark;
+    private String description;
 
     private static final long serialVersionUID = 1L;
 } 

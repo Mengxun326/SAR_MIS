@@ -1,7 +1,7 @@
 import Footer from '@/components/Footer';
 import { userRegisterUsingPost } from '@/services/backend/userController';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormText } from '@ant-design/pro-components';
+import { LockOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormText, ProFormSelect } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { Helmet, history } from '@umijs/max';
 import { message, Tabs } from 'antd';
@@ -75,14 +75,14 @@ const UserRegisterPage: React.FC = () => {
       >
         <LoginForm
           contentStyle={{
-            minWidth: 280,
+            minWidth: 320,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" style={{ height: '44px' }} src="/logo.svg" />}
+          logo={<img alt="logo" style={{ height: '44px' }} src="https://meng-xun-image-host.oss-cn-shanghai.aliyuncs.com/img/favicon%20(2).ico" />}
           title="学生学籍管理信息系统"
           subTitle={'新用户注册'}
           initialValues={{
-            autoLogin: true,
+            userRole: 'user', // 默认为学生用户
           }}
           submitter={{
             searchConfig: {
@@ -129,6 +129,49 @@ const UserRegisterPage: React.FC = () => {
                   },
                 ]}
               />
+              
+              <ProFormText
+                name="userName"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <TeamOutlined />,
+                }}
+                placeholder={'请输入用户昵称'}
+                rules={[
+                  {
+                    required: true,
+                    message: '用户昵称是必填项！',
+                  },
+                  {
+                    min: 2,
+                    max: 20,
+                    message: '昵称长度在2-20位之间！',
+                  },
+                  {
+                    pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_\s]+$/,
+                    message: '昵称只能包含中文、字母、数字、下划线和空格！',
+                  },
+                ]}
+              />
+
+              <ProFormSelect
+                name="userRole"
+                fieldProps={{
+                  size: 'large',
+                  placeholder: '请选择用户角色',
+                }}
+                options={[
+                  { label: '学生', value: 'user' },
+                  { label: '教师', value: 'teacher' },
+                ]}
+                rules={[
+                  {
+                    required: true,
+                    message: '请选择用户角色！',
+                  },
+                ]}
+              />
+              
               <ProFormText.Password
                 name="userPassword"
                 fieldProps={{

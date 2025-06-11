@@ -43,32 +43,20 @@ public class StudentPunishment implements Serializable {
     /**
      * 处分日期
      */
+    @TableField("punishDate")
     private Date punishmentDate;
 
     /**
-     * 处分期限（月）
+     * 解除处分日期
      */
-    private Integer duration;
-
-    /**
-     * 是否已解除（0-未解除，1-已解除）
-     */
-    private Integer isRevoked;
-
-    /**
-     * 解除日期
-     */
-    private Date revokeDate;
-
-    /**
-     * 处理人
-     */
-    private String handler;
+    @TableField("cancelDate")
+    private Date cancelDate;
 
     /**
      * 备注
      */
-    private String remark;
+    @TableField("description")
+    private String description;
 
     /**
      * 创建时间
